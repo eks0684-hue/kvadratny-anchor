@@ -232,7 +232,16 @@ updateOnlineStatus();
 
 // Информация о Service Worker в консоли
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready.then(function(registration) {
-        console.log('✅ Service Worker готов:', registration);
-    });
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js') // <--- Убедитесь, что здесь 'sw.js'
+      .then(registration => {
+        console.log('SW registration successful. Scope: ', registration.scope);
+      })
+      .catch(err => {
+        console.error('SW registration failed: ', err);
+      });
+  });
 }
+
+
+
