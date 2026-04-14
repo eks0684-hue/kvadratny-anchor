@@ -127,3 +127,54 @@ function resetAllSquares() {
         grid.appendChild(createSquareElement(square, 0));
     });
 }
+// ============================================
+// КНОПКА УСТАНОВКИ PWA
+// ============================================
+
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallButton();
+});
+
+function showInstallButton() {
+    const container = document.querySelector('.container');
+   
+    // Проверяем что кнопка ещё не создана
+    if (document.getElementById('installBtn')) {
+        return;
+    }
+   
+    const installBtn = document.createElement('button');
+    installBtn.id = 'installBtn';
+    installBtn.className = 'reset-btn';
+    installBtn.textContent = '📱 Установить приложение';
+    installBtn.style.marginTop = '20px';
+    installBtn.style.background = 'linear-gradient(135deg, #4a6fa5, #2d5f4f)';
+   
+    installBtn.addEventListener('click', async function() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const result = await deferredPrompt.userChoice;
+           
+            if (result.outcome === 'accepted') {
+                console.log('Приложение установлено');
+                installBtn.style.display = 'none';
+            }
+           
+            deferredPrompt = null;
+        }
+    });
+   
+    container.appendChild(installBtn);
+}
+
+// Скрываем кнопку если приложение уже установлено
+window.addEventListener('appinstalled', function() {
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) {
+        installBtn.style.display = 'none';
+    }
+});
