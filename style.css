@@ -1,0 +1,326 @@
+/* ============================================
+   ОБЩИЕ СТИЛИ И ПЕРЕМЕННЫЕ
+   ============================================ */
+
+:root {
+    /* Цветовая палитра */
+    --bg-dark: #1a1a2e;
+    --bg-darker: #0f0f1e;
+    --accent-green: #2d5f4f;
+    --accent-blue: #4a6fa5;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --card-bg: #242438;
+    --shadow: rgba(0, 0, 0, 0.4);
+    
+    /* Размеры */
+    --border-radius: 12px;
+    --transition-speed: 0.6s;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+    /* Запрет выделения текста для лучшего UX */
+    -webkit-user-select: none;
+    user-select: none;
+    /* Отключение подсветки при нажатии на iOS */
+    -webkit-tap-highlight-color: transparent;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+/* ============================================
+   ЗАГОЛОВОК
+   ============================================ */
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+/* ============================================
+   СЕТКА КВАДРАТОВ 4x4
+   ============================================ */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 30px;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+/* ============================================
+   КВАДРАТ С 3D FLIP ЭФФЕКТОМ
+   ============================================ */
+
+.square {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%; /* Делает квадрат */
+    cursor: pointer;
+    perspective: 1000px; /* Для 3D эффекта */
+}
+
+.square-inner {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transition: transform var(--transition-speed) ease-in-out;
+    transform-style: preserve-3d;
+}
+
+/* Активация flip-анимации при нажатии */
+.square.flipping .square-inner {
+    transform: rotateY(180deg);
+}
+
+.square-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.3;
+    box-shadow: 0 4px 12px var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+/* Передняя сторона */
+.square-face.front {
+    background: linear-gradient(135deg, var(--accent-green), rgba(45, 95, 79, 0.7));
+}
+
+/* Задняя сторона (перевернутая) */
+.square-face.back {
+    background: linear-gradient(135deg, var(--accent-blue), rgba(74, 111, 165, 0.7));
+    transform: rotateY(180deg);
+}
+
+/* Эффект при наведении (только для десктопа) */
+@media (hover: hover) {
+    .square:hover .square-face {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px var(--shadow);
+    }
+    
+    .square:hover .square-face.back {
+        transform: rotateY(180deg) scale(1.05);
+    }
+}
+
+/* Эффект нажатия */
+.square:active .square-face {
+    transform: scale(0.95);
+}
+
+/* ============================================
+   КНОПКА СБРОСА
+   ============================================ */
+
+.reset-btn {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 14px 28px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.reset-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow);
+}
+
+.reset-btn:active {
+    transform: translateY(0);
+}
+
+/* ============================================
+   ИНДИКАТОР ОФФЛАЙН РЕЖИМА
+   ============================================ */
+
+.offline-indicator {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(45, 95, 79, 0.9);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px var(--shadow);
+    animation: slideInRight 0.5s ease-out;
+}
+
+.offline-indicator.show {
+    display: flex;
+}
+
+.offline-indicator span {
+    color: #4ade80;
+    font-size: 1.2rem;
+    animation: pulse 2s infinite;
+}
+
+/* ============================================
+   АНИМАЦИИ
+   ============================================ */
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ============================================
+   АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ
+   ============================================ */
+
+@media (max-width: 480px) {
+    body {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 1.6rem;
+    }
+    
+    .subtitle {
+        font-size: 0.85rem;
+    }
+    
+    .grid {
+        gap: 8px;
+    }
+    
+    .square-face {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+    
+    .reset-btn {
+        font-size: 0.9rem;
+        padding: 12px 24px;
+    }
+    
+    .offline-indicator {
+        bottom: 10px;
+        right: 10px;
+        font-size: 0.75rem;
+        padding: 6px 12px;
+    }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 360px) {
+    .grid {
+        gap: 6px;
+    }
+    
+    .square-face {
+        font-size: 0.7rem;
+        padding: 6px;
+    }
+}
+
+/* ============================================
+   СТИЛИ ДЛЯ iOS SAFARI
+   ============================================ */
+
+/* Безопасная зона для iPhone с вырезом */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(20px, env(safe-area-inset-left));
+        padding-right: max(20px, env(safe-area-inset-right));
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+}
