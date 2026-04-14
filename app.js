@@ -132,13 +132,17 @@ function resetAllSquares() {
 // ============================================
 
 let deferredPrompt;
+let installButton;
 
+// Перехватываем событие установки
 window.addEventListener('beforeinstallprompt', function(e) {
+    console.log('✅ Событие beforeinstallprompt перехвачено');
     e.preventDefault();
     deferredPrompt = e;
     showInstallButton();
 });
 
+// Показываем кнопку установки
 function showInstallButton() {
     const container = document.querySelector('.container');
    
@@ -147,34 +151,88 @@ function showInstallButton() {
         return;
     }
    
-    const installBtn = document.createElement('button');
-    installBtn.id = 'installBtn';
-    installBtn.className = 'reset-btn';
-    installBtn.textContent = '📱 Установить приложение';
-    installBtn.style.marginTop = '20px';
-    installBtn.style.background = 'linear-gradient(135deg, #4a6fa5, #2d5f4f)';
+    console.log('📱 Показываем кнопку установки');
    
-    installBtn.addEventListener('click', async function() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const result = await deferredPrompt.userChoice;
-           
-            if (result.outcome === 'accepted') {
-                console.log('Приложение установлено');
-                installBtn.style.display = 'none';
-            }
-           
-            deferredPrompt = null;
+    installButton = document.createElement('button');
+    installButton.id = 'installBtn';
+    installButton.className = 'reset-btn';
+    installButton.textContent = '📱 Установить приложение';
+    installButton.style.marginTop = '20px';
+    installButton.style.background = 'linear-gradient(135deg, #4a6fa5, #2d5f4f)';
+   
+    installButton.addEventListener('click', async function() {
+        console.log('👆 Нажата кнопка установки');
+       
+        if (!deferredPrompt) {
+            console.log('❌ deferredPrompt не доступен');
+            alert('Установка недоступна. Попробуйте через меню браузера: ⋮ → "Установить приложение"');
+            return;
         }
+       
+        // Показываем диалог установки
+        deferredPrompt.prompt();
+       
+        // Ждём ответа пользователя
+        const result = await deferredPrompt.userChoice;
+       
+        console.log('Результат установки:', result.outcome);
+       
+        if (result.outcome === 'accepted') {
+            console.log('✅ Пользователь установил приложение');
+        } else {
+            console.log('❌ Пользователь отказался от установки');
+        }
+       
+        // Очищаем
+        deferredPrompt = null;
+        installButton.style.display = 'none';
     });
    
-    container.appendChild(installBtn);
+    container.appendChild(installButton);
 }
 
-// Скрываем кнопку если приложение уже установлено
+// Скрываем кнопку если приложение установлено
 window.addEventListener('appinstalled', function() {
-    const installBtn = document.getElementById('installBtn');
-    if (installBtn) {
-        installBtn.style.display = 'none';
+    console.log('✅ Приложение установлено');
+    if (installButton) {
+        installButton.style.display = 'none';
     }
 });
+
+// Проверяем можно ли установить PWA
+if (window.matchMedia('(display-mode: standalone)').matches) {
+    console.log('✅ Приложение уже установлено (standalone режим)');
+}
+
+// ============================================
+// ПРОВЕРКА ОФФЛАЙН РЕЖИМА
+// ============================================
+
+function updateOnlineStatus() {
+    const indicator = document.getElementById('offlineIndicator');
+   
+    if (!navigator.onLine) {
+        console.log('📴 ОФФЛАЙН режим');
+        if (indicator) {
+            indicator.classList.add('show');
+        }
+    } else {
+        console.log('🌐 ОНЛАЙН режим');
+        if (indicator) {
+            indicator.classList.remove('show');
+        }
+    }
+}
+
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
+// Проверяем при загрузке
+updateOnlineStatus();
+
+// Информация о Service Worker в консоли
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready.then(function(registration) {
+        console.log('✅ Service Worker готов:', registration);
+    });
+}
